@@ -8,7 +8,6 @@ import {
   FileText, 
   Trash2, 
   Building, 
-  ShieldAlert,
   Calendar,
   Check
 } from 'lucide-react';
@@ -21,7 +20,7 @@ export default function PendenciesModal({
   onClose,
   onOpenNewPendency,
   onStartCloseTicket,
-  onViewReport,
+  onViewPdf,
   onDeletePendency
 }) {
   const [filterStatus, setFilterStatus] = useState('open'); // 'open', 'resolved', 'all'
@@ -59,7 +58,7 @@ export default function PendenciesModal({
             <AlertTriangle size={22} className="text-rose" />
             <div>
               <h3>Gestão de Pendências & Chamados</h3>
-              <p>Acompanhamento de bloqueios operacionais e relatórios de resolução</p>
+              <p>Acompanhamento de bloqueios operacionais e relatórios em PDF</p>
             </div>
           </div>
           <button className="btn-close-modal" onClick={onClose}><X size={18} /></button>
@@ -79,7 +78,7 @@ export default function PendenciesModal({
                 className={`tab-btn ${filterStatus === 'resolved' ? 'active' : ''}`}
                 onClick={() => setFilterStatus('resolved')}
               >
-                Resolvidas / Relatórios ({pendencies.filter(p => p.status === 'resolved').length})
+                Resolvidas com PDF ({pendencies.filter(p => p.status === 'resolved').length})
               </button>
               <button 
                 className={`tab-btn ${filterStatus === 'all' ? 'active' : ''}`}
@@ -117,6 +116,7 @@ export default function PendenciesModal({
               const activity = activities.find(a => a.id === item.activity_id);
               const sev = getSeverityBadge(item.severity);
               const isResolved = item.status === 'resolved';
+              const doc = item.closureDocument;
 
               return (
                 <div key={item.id} className={`pendency-item-card ${isResolved ? 'resolved' : ''}`}>
@@ -147,7 +147,7 @@ export default function PendenciesModal({
                       {isResolved ? (
                         <span className="status-resolved-tag">
                           <CheckCircle2 size={15} />
-                          <span>Resolvida & Homologada</span>
+                          <span>Resolvida &middot; PDF Anexado</span>
                         </span>
                       ) : (
                         <span className="status-open-tag">
@@ -158,26 +158,26 @@ export default function PendenciesModal({
                     </div>
 
                     <div className="pendency-actions-group">
-                      {/* Se tem relatório de fechamento */}
-                      {item.closure_report && (
+                      {/* Se tem PDF anexado */}
+                      {doc && (
                         <button 
                           className="btn-view-report"
-                          onClick={() => onViewReport(item.closure_report)}
+                          onClick={() => onViewPdf(doc)}
                         >
                           <FileText size={14} />
-                          <span>Ver Relatório ({item.closure_report.ticketNumber})</span>
+                          <span>Ver Chamado PDF ({doc.ticketNumber || 'Anexo'})</span>
                         </button>
                       )}
 
-                      {/* Se for Admin e estiver aberta, botão para fechar e emitir documento */}
+                      {/* Se for Admin e estiver aberta, botão para fechar e fazer upload do PDF */}
                       {isAdmin && !isResolved && (
                         <button 
                           className="btn-resolve-wizard"
                           onClick={() => onStartCloseTicket(item)}
-                          title="Fechar chamado e emitir relatório Elis"
+                          title="Fechar pendência e fazer upload do PDF emitido pelo sistema de chamados"
                         >
                           <Check size={14} />
-                          <span>Fechar Pendência (Emitir Chamado)</span>
+                          <span>Fechar & Upload PDF</span>
                         </button>
                       )}
 

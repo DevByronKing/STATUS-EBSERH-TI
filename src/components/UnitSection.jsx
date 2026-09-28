@@ -1,6 +1,6 @@
 import React from 'react';
 import ActivityCard from './ActivityCard';
-import { Plus, CheckCircle, Clock, Building } from 'lucide-react';
+import { Plus, CheckCircle, Clock } from 'lucide-react';
 
 export default function UnitSection({
   unit,
@@ -10,7 +10,8 @@ export default function UnitSection({
   onEditActivity,
   onDeleteActivity,
   onAddComment,
-  onViewReport,
+  onViewPdf,
+  onCompleteWithPdf,
   onAddActivityInUnit
 }) {
   const total = activities.length;
@@ -22,7 +23,6 @@ export default function UnitSection({
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
-  // Cores corporativas Padrão Elis
   const getProgressColor = (pct) => {
     if (pct >= 75) return 'var(--elis-teal)';
     if (pct >= 40) return 'var(--elis-cyan)';
@@ -42,7 +42,6 @@ export default function UnitSection({
     <section className="hospital-container">
       {/* Sidebar Executiva com Gráfico Circular */}
       <div className="hospital-info">
-        {/* Barra de Acento Padrão Elis */}
         <div className="unit-elis-stripe"></div>
 
         <div className="h-header">
@@ -112,7 +111,7 @@ export default function UnitSection({
         {activities.length > 0 ? (
           activities.map((activity) => {
             const linked = pendencies.find(
-              p => p.activity_id === activity.id || (p.closure_report && p.activity_id === activity.id)
+              p => p.activity_id === activity.id || (p.closureDocument && p.activity_id === activity.id)
             );
             return (
               <ActivityCard
@@ -122,7 +121,8 @@ export default function UnitSection({
                 onEdit={onEditActivity}
                 onDelete={onDeleteActivity}
                 onAddComment={onAddComment}
-                onViewReport={onViewReport}
+                onViewPdf={onViewPdf}
+                onCompleteWithPdf={onCompleteWithPdf}
                 linkedPendency={linked}
               />
             );

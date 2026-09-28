@@ -26,8 +26,15 @@ export const initialActivities = [
     icon: '🚪',
     status: 'completed',
     description: 'Instalado, configurado e sincronizado em Abril.',
-    validation: 'Validado Myelis',
+    validation: 'Homologado Chamado T 26 09 13491',
     alert: null,
+    closureDocument: {
+      ticketNumber: 'T 26 09 13491',
+      fileName: 'chamado-13491.pdf',
+      url: '/documents/chamado-13491.pdf',
+      title: 'T 26 09 13491 Preventiva e Conservação de Portais',
+      closedAt: '2026-09-16'
+    },
     comments: [
       { id: 'c1', date: '15/04/2026 14:30', author: 'Luiz Barbosa', text: 'Hardware testado e leitura de tags 100% calibrada.' }
     ],
@@ -41,8 +48,15 @@ export const initialActivities = [
     icon: '🚪',
     status: 'completed',
     description: 'Instalado, configurado e sincronizado em Junho.',
-    validation: 'Validado Myelis',
+    validation: 'Homologado Chamado T 26 09 14617',
     alert: null,
+    closureDocument: {
+      ticketNumber: 'T 26 09 14617',
+      fileName: 'chamado-14617.pdf',
+      url: '/documents/chamado-14617.pdf',
+      title: 'T 26 09 14617 Validação de Portais RFID e Servidor Local',
+      closedAt: '2026-09-17'
+    },
     comments: [],
     order_index: 1,
     updated_at: '2026-09-20T10:00:00Z'
@@ -56,6 +70,13 @@ export const initialActivities = [
     description: 'Funcional e validada pelos sistemas desde Abril.',
     validation: 'Validado Myelis',
     alert: null,
+    closureDocument: {
+      ticketNumber: 'T 26 09 13491',
+      fileName: 'chamado-13491.pdf',
+      url: '/documents/chamado-13491.pdf',
+      title: 'Homologação Mesa Distribuição e Periféricos',
+      closedAt: '2026-09-16'
+    },
     comments: [],
     order_index: 2,
     updated_at: '2026-09-20T10:00:00Z'
@@ -125,18 +146,21 @@ export const initialActivities = [
   {
     id: 'act-bb-8',
     unit_id: 'barros-barreto',
-    title: 'Portais Evasão',
+    title: 'Portais Evasão RFID',
     icon: '🚪',
-    status: 'pending',
-    description: 'Sistema misto: 4 portais ativos e 8 inativos.',
-    validation: 'Parcial',
-    alert: {
-      type: 'warning',
-      title: 'Reparo Necessário',
-      message: 'Aguardando manutenção nos vidros físicos.'
+    status: 'completed',
+    description: 'Planejamento de infraestrutura concluído e manutenção preventiva geral realizada.',
+    validation: 'Homologado Chamado T 26 09 13480',
+    alert: null,
+    closureDocument: {
+      ticketNumber: 'T 26 09 13480',
+      fileName: 'chamado-13480.pdf',
+      url: '/documents/chamado-13480.pdf',
+      title: 'T 26 09 13480 Planejamento de Portais de Evasão e Preventiva',
+      closedAt: '2026-09-16'
     },
     comments: [
-      { id: 'c3', date: '16/09/2026 19:50', author: 'Luiz Barbosa', text: 'Planejamento e preventiva finalizados sob o chamado T 26 09 13480.' }
+      { id: 'c3', date: '16/09/2026 19:50', author: 'Luiz Barbosa', text: 'Chamado finalizado e PDF anexado com sucesso.' }
     ],
     order_index: 7,
     updated_at: '2026-09-24T16:00:00Z'
@@ -224,7 +248,7 @@ export const initialPendencies = [
     description: 'Necessário alinhar entre o técnico local e a equipe de TI Elis a liberação de porta e credencial de VPN.',
     created_at: '2026-09-10T09:15:00Z',
     resolved_at: null,
-    closure_report: null
+    closureDocument: null
   },
   {
     id: 'pend-2',
@@ -236,7 +260,7 @@ export const initialPendencies = [
     description: 'Servidor já configurado e fisicamente no hospital. Aguarda término de obras e fixação dos portais para subida final.',
     created_at: '2026-09-12T14:00:00Z',
     resolved_at: null,
-    closure_report: null
+    closureDocument: null
   },
   {
     id: 'pend-3',
@@ -248,7 +272,7 @@ export const initialPendencies = [
     description: 'Equipamento encontra-se em estoque. Bloqueado aguardando liberação da mesa/sala pela administração do hospital.',
     created_at: '2026-09-14T11:20:00Z',
     resolved_at: null,
-    closure_report: null
+    closureDocument: null
   },
   {
     id: 'pend-4',
@@ -260,9 +284,8 @@ export const initialPendencies = [
     description: 'Servidor pronto em estoque aguardando rack climatizado com energia estabilizada.',
     created_at: '2026-09-14T11:30:00Z',
     resolved_at: null,
-    closure_report: null
+    closureDocument: null
   },
-  // Chamado Modelo Fechado anexado ao projeto (T 26 09 13480)
   {
     id: 'pend-resolved-13480',
     unit_id: 'barros-barreto',
@@ -273,121 +296,12 @@ export const initialPendencies = [
     description: 'Mapeamento estratégico dos portais de evasão RFID e manutenção preventiva geral em 100% dos periféricos e dispositivos ativos.',
     created_at: '2026-09-16T19:50:00Z',
     resolved_at: '2026-09-16T20:12:00Z',
-    closure_report: {
+    closureDocument: {
       ticketNumber: 'T 26 09 13480',
-      title: 'Planejamento de Portais de Evasão e Manutenção Preventiva de Dispositivos',
-      requester: {
-        name: 'Luiz Henrique Barbosa Silva',
-        country: 'Brazil',
-        employeeId: '03784221203',
-        login: 'lbarbosa3',
-        email: 'luiz.barbosa@elis.com',
-        department: 'Tecnologia da Informação',
-        room: 'Unknown'
-      },
-      details: {
-        shortDesc: 'Planejamento de Portais de Evasão e Manutenção Preventiva de Dispositivos',
-        incidentType: 'Request',
-        category: 'Software',
-        subcategory: 'Assistance',
-        country: 'Brazil',
-        location: 'Unknown'
-      },
-      planning: {
-        impact: 'External Customer',
-        urgency: 'Partially able to work',
-        priority: 'P2 High',
-        targetDate: '17 de Setembro de 2026 19:50',
-        processingTime: '1 day',
-        onHold: 'Não'
-      },
-      processing: {
-        operatorGroup: 'BR-IT Center West',
-        operator: 'Luiz Henrique Barbosa Silva',
-        status: 'Completed',
-        resolved: 'Sim',
-        resolutionDate: '16 de Setembro de 2026 20:12',
-        closed: 'Não',
-        registeredTime: '08:00'
-      },
-      request: {
-        author: 'Luiz Henrique Barbosa Silva',
-        date: '16 de Setembro de 2026 20:13',
-        unitName: 'EBSERH - Hospital Universitário João de Barros Barreto',
-        objective: 'Solicitação de atendimento presencial e suporte técnico na unidade EBSERH Barros Barreto para alinhamento estratégico da infraestrutura de controle de enxoval e manutenção da planta.',
-        justifications: [
-          'Projeção de Portais de Evasão: Necessidade de mapear, planejar e estruturar a estratégia de instalação dos portais de evasão (leitura/rastreamento RFID) para mitigar a perda/evasão de peças e garantir a acurácia do fluxo operacional entre o hospital e a lavanderia.',
-          'Integridade Operacional: Execução de rotina preventiva nos equipamentos operacionais já instalados na unidade, evitando paradas não programadas e mantendo a alta disponibilidade dos sistemas de leitura e pesagem.'
-        ]
-      },
-      actions: {
-        author: 'Luiz Henrique Barbosa Silva',
-        date: '16 de Setembro de 2026 20:13',
-        executionDate: '15/09/2026',
-        summary: 'Planejamento de infraestrutura para portais de evasão concluído e manutenção preventiva geral realizada com sucesso nos dispositivos da unidade EBSERH Barros Barreto.',
-        items: [
-          {
-            title: 'Planejamento Estratégico e Visita Técnica (Portais de Evasão)',
-            bullets: [
-              'Acompanhamento presencial no local para levantamento de requisitos de infraestrutura e fluxo de circulação.',
-              'Mapeamento e definição dos pontos críticos para posicionamento dos portais de evasão.',
-              'Elaboração da estratégia técnica de instalação (comunicação de rede, alimentação elétrica e posicionamento de antenas/leitores).'
-            ]
-          },
-          {
-            title: 'Manutenção Preventiva dos Dispositivos Existentes',
-            bullets: [
-              'Inspeção física e limpeza técnica em 100% dos periféricos e dispositivos ativos na unidade.',
-              'Verificação e reaperto de conexões físicas (cabos de rede, fontes e conectores seriais/USB).',
-              'Testes de conectividade, porta lógica e validação do fluxo de leitura/comunicação com os sistemas centrais.'
-            ]
-          }
-        ]
-      },
-      conclusion: 'Todos os dispositivos da unidade encontram-se limpos, revisados e operando em perfeita normalidade. A estratégia de instalação dos portais foi alinhada e documentada para a próxima etapa. Chamado finalizado e serviço homologado no local.',
-      technicalInfo: {
-        registrationDate: '16 de Setembro de 2026 19:50',
-        effectiveTime: '00:22',
-        holdTime: '00:00',
-        adjustedTime: '00:22',
-        resolvedTime: '00:00',
-        progressTime: '00:22',
-        registeredTime: '08:00',
-        standardSolution: 'Não há solução padrão vinculada'
-      },
-      ticketDetails: {
-        objects: {
-          engineer: 'Não',
-          noNotifications: 'Não',
-          partiallyValidated: 'Não',
-          reactedTime: '0.0',
-          escalationTime: '0.0',
-          adjustedDuration: '0.0',
-          excludeFromSLA: 'Não'
-        },
-        prioritisation: {
-          wsjf: '0.0',
-          l2ResolutionTime: '0.0'
-        },
-        equipment: {
-          productionLosses: 'Não'
-        },
-        additional: {
-          supplyChain: { internalMistake: 'Não', quantity: '0.0', value: '0.0' },
-          allFunctions: {
-            chasingCounter: '0.0',
-            reopened: 'Não',
-            reassignmentTime: '0.0',
-            supplierAssignTime: '0.0',
-            firstTimeResolution: 'Não',
-            usePriorityMatrix: 'Não'
-          }
-        }
-      },
-      metadata: {
-        printedBy: 'Luiz Henrique Barbosa',
-        printedAt: '16 de Setembro de 2026 20:19'
-      }
+      fileName: 'chamado-13480.pdf',
+      url: '/documents/chamado-13480.pdf',
+      title: 'T 26 09 13480 Planejamento de Portais de Evasão e Preventiva',
+      closedAt: '2026-09-16'
     }
   }
 ];

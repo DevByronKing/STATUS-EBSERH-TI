@@ -3,13 +3,13 @@ import {
   CheckCircle2, 
   Clock, 
   AlertTriangle, 
-  Info, 
   FileText, 
   Edit3, 
   Trash2, 
   MessageSquare, 
   Send,
-  PlusCircle
+  FileCheck,
+  Check
 } from 'lucide-react';
 
 export default function ActivityCard({
@@ -18,7 +18,8 @@ export default function ActivityCard({
   onEdit,
   onDelete,
   onAddComment,
-  onViewReport,
+  onViewPdf,
+  onCompleteWithPdf,
   linkedPendency
 }) {
   const cardRef = useRef(null);
@@ -55,7 +56,7 @@ export default function ActivityCard({
     setCommentText('');
   };
 
-  // Badge config
+  // Badge de status
   const getBadgeConfig = (status) => {
     switch (status) {
       case 'completed':
@@ -73,6 +74,7 @@ export default function ActivityCard({
   };
 
   const badge = getBadgeConfig(activity.status);
+  const closureDoc = activity.closureDocument || linkedPendency?.closureDocument;
 
   return (
     <div 
@@ -114,22 +116,36 @@ export default function ActivityCard({
           </div>
         )}
 
-        {/* Chamado / Relatório Vinculado se houver */}
-        {linkedPendency && linkedPendency.closure_report && (
+        {/* BOTÃO VISUALIZAR PDF DO CHAMADO (Se já concluído com PDF) */}
+        {closureDoc && (
           <div 
             className="card-closure-link"
-            onClick={() => onViewReport(linkedPendency.closure_report)}
-            title="Clique para visualizar o documento de fechamento deste chamado"
+            onClick={() => onViewPdf(closureDoc)}
+            title="Clique para visualizar o PDF emitido pelo sistema de chamados da Elis"
           >
-            <FileText size={16} className="text-primary" />
+            <div className="pdf-mini-icon">
+              <FileText size={18} className="text-primary" />
+            </div>
             <div className="closure-link-text">
-              <span className="closure-ticket">{linkedPendency.closure_report.ticketNumber}</span>
-              <span className="closure-status">Chamado Homologado &middot; Ver Documento</span>
+              <span className="closure-ticket">{closureDoc.ticketNumber || 'Chamado Homologado'}</span>
+              <span className="closure-status">📄 Ver Relatório em PDF anexado</span>
             </div>
           </div>
         )}
 
-        {/* Ações de Administrador */}
+        {/* BOTÃO CONCLUIR ATIVIDADE COM UPLOAD OBRIGATÓRIO DE PDF (Modo Admin) */}
+        {isAdmin && activity.status !== 'completed' && (
+          <button 
+            className="btn-complete-card-action"
+            onClick={() => onCompleteWithPdf(activity)}
+            title="Concluir atividade e fazer upload obrigatório do PDF do chamado"
+          >
+            <Check size={15} />
+            <span>Concluir & Anexar PDF do Chamado</span>
+          </button>
+        )}
+
+        {/* Ações de Administrador (Editar / Excluir) */}
         {isAdmin && (
           <div className="card-admin-actions">
             <button 

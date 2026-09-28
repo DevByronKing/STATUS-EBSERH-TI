@@ -5,8 +5,8 @@ import UnitSection from './components/UnitSection';
 import ActivityModal from './components/ActivityModal';
 import PendencyModal from './components/PendencyModal';
 import PendenciesModal from './components/PendenciesModal';
-import CloseTicketWizardModal from './components/CloseTicketWizardModal';
-import ClosureReportModal from './components/ClosureReportModal';
+import CompleteActivityModal from './components/CompleteActivityModal';
+import PdfViewerModal from './components/PdfViewerModal';
 import AdminLoginModal from './components/AdminLoginModal';
 import CloudSettingsModal from './components/CloudSettingsModal';
 import PresentationModal from './components/PresentationModal';
@@ -49,12 +49,12 @@ export default function App() {
     pendencies: initialPendencies,
     lastUpdated: new Date().toISOString()
   });
-  const [dataSource, setDataSource] = useState('local'); // 'local' ou 'supabase'
+  const [dataSource, setDataSource] = useState('local');
   const [isLoading, setIsLoading] = useState(true);
 
   // Filtros de Pesquisa e Visualização
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'completed', 'pending'
+  const [statusFilter, setStatusFilter] = useState('all');
   const [selectedUnit, setSelectedUnit] = useState('all');
 
   // Modais
@@ -66,11 +66,13 @@ export default function App() {
   const [isPendencyModalOpen, setIsPendencyModalOpen] = useState(false);
   const [isPendenciesListModalOpen, setIsPendenciesListModalOpen] = useState(false);
 
-  const [isCloseTicketWizardOpen, setIsCloseTicketWizardOpen] = useState(false);
-  const [closingPendency, setClosingPendency] = useState(null);
+  // Modal de Conclusão Obrigatória com Upload de PDF
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [completingTarget, setCompletingTarget] = useState(null); // Pode ser atividade ou pendência
+  const [completingIsPendency, setCompletingIsPendency] = useState(false);
 
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [viewingReport, setViewingReport] = useState(null);
+  // Visualizador de PDF
+  const [viewingPdf, setViewingPdf] = useState(null);
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
@@ -88,7 +90,7 @@ export default function App() {
     init();
   }, []);
 
-  // Inscrição Realtime no Supabase (se conectado)
+  // Inscrição Realtime no Supabase
   useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) return;
@@ -207,59 +209,98 @@ export default function App() {
     await syncDeletePendency(pendencyId, newData);
   };
 
-  // Fechamento de Chamado e Emissão de Documento Elis
-  const handleStartCloseTicket = (pendency) => {
-    setClosingPendency(pendency);
-    setIsCloseTicketWizardOpen(true);
+  // FLUXO PRINCIPAL: CONCLUIR ATIVIDADE OU FECHAR PENDÊNCIA COM UPLOAD OBRIGATÓRIO DE PDF
+  const handleStartCompleteActivity = (activity) => {
+    setCompletingTarget(activity);
+    setCompletingIsPendency(false);
+    setIsCompleteModalOpen(true);
+  };
+
+  const handleStartClosePendency = (pendency) => {
+    setCompletingTarget(pendency);
+    setCompletingIsPendency(true);
+    setIsCompleteModalOpen(true);
     setIsPendenciesListModalOpen(false);
   };
 
-  const handleFinishCloseTicket = async (closureReport) => {
-    if (!closingPendency) return;
+  const handleCompleteSuccess = async (completionData) => {
+    if (!completingTarget) return;
 
-    const updatedPendency = {
-      ...closingPendency,
-      status: 'resolved',
-      resolved_at: new Date().toISOString(),
-      closure_report: closureReport
-    };
+    if (completingIsPendency) {
+      // É uma pendência que foi fechada
+      const updatedPendency = {
+        ...completingTarget,
+        status: 'resolved',
+        resolved_at: new Date().toISOString(),
+        closureDocument: completionData.closureDocument
+      };
 
-    const updatedPendencies = data.pendencies.map(p => 
-      p.id === closingPendency.id ? updatedPendency : p
-    );
+      const updatedPendencies = data.pendencies.map(p => 
+        p.id === completingTarget.id ? updatedPendency : p
+      );
 
-    let updatedActivities = data.activities;
-    if (closingPendency.activity_id) {
-      updatedActivities = data.activities.map(a => {
-        if (a.id === closingPendency.activity_id) {
-          return {
-            ...a,
-            status: 'completed',
-            validation: 'Homologado no Chamado ' + closureReport.ticketNumber,
-            alert: null
-          };
-        }
-        return a;
-      });
+      // Se estava ligada a uma atividade, atualiza também a atividade
+      let updatedActivities = data.activities;
+      if (completingTarget.activity_id) {
+        updatedActivities = data.activities.map(a => {
+          if (a.id === completingTarget.activity_id) {
+            return {
+              ...a,
+              status: 'completed',
+              validation: completionData.validation,
+              alert: null,
+              closureDocument: completionData.closureDocument
+            };
+          }
+          return a;
+        });
+      }
+
+      const newData = {
+        ...data,
+        pendencies: updatedPendencies,
+        activities: updatedActivities
+      };
+
+      setData(newData);
+      setIsCompleteModalOpen(false);
+      setCompletingTarget(null);
+
+      await syncSavePendency(updatedPendency, newData);
+
+      // Abre o visualizador para conferir o PDF
+      setViewingPdf(completionData.closureDocument);
+    } else {
+      // É uma atividade concluída
+      const updatedActivity = {
+        ...completingTarget,
+        status: 'completed',
+        validation: completionData.validation,
+        alert: null,
+        closureDocument: completionData.closureDocument
+      };
+
+      const updatedActivities = data.activities.map(a => 
+        a.id === completingTarget.id ? updatedActivity : a
+      );
+
+      const newData = {
+        ...data,
+        activities: updatedActivities
+      };
+
+      setData(newData);
+      setIsCompleteModalOpen(false);
+      setCompletingTarget(null);
+
+      await syncSaveActivity(updatedActivity, newData);
+
+      // Abre o visualizador para conferir o PDF
+      setViewingPdf(completionData.closureDocument);
     }
-
-    const newData = {
-      ...data,
-      pendencies: updatedPendencies,
-      activities: updatedActivities
-    };
-
-    setData(newData);
-    setIsCloseTicketWizardOpen(false);
-    setClosingPendency(null);
-
-    await syncSavePendency(updatedPendency, newData);
-
-    setViewingReport(closureReport);
-    setIsReportModalOpen(true);
   };
 
-  // Compartilhar Link com Gestores
+  // Compartilhar Link
   const handleCopyShareLink = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopiedLink(true);
@@ -268,7 +309,7 @@ export default function App() {
 
   // Restaurar dados originais padrão Elis
   const handleResetToDefault = () => {
-    if (window.confirm('Deseja realmente restaurar os dados originais da Elis (Barros Barreto e Betina Ferro)?')) {
+    if (window.confirm('Deseja realmente restaurar os dados originais da Elis?')) {
       const resetData = {
         units: initialUnits,
         activities: initialActivities,
@@ -278,7 +319,7 @@ export default function App() {
       saveLocalData(resetData);
       setData(resetData);
       setIsSettingsModalOpen(false);
-      alert('Dados restaurados com sucesso para o padrão inicial Elis.');
+      alert('Dados restaurados com sucesso.');
     }
   };
 
@@ -358,10 +399,8 @@ export default function App() {
               onEditActivity={handleEditActivity}
               onDeleteActivity={handleDeleteActivity}
               onAddComment={handleAddComment}
-              onViewReport={(rep) => {
-                setViewingReport(rep);
-                setIsReportModalOpen(true);
-              }}
+              onViewPdf={(doc) => setViewingPdf(doc)}
+              onCompleteWithPdf={handleStartCompleteActivity}
               onAddActivityInUnit={(unitId) => handleOpenNewActivity(unitId)}
             />
           );
@@ -395,11 +434,28 @@ export default function App() {
           activities={data.activities}
           pendencies={data.pendencies}
           onClose={() => setIsPresentationOpen(false)}
-          onViewReport={(rep) => {
+          onViewReport={(doc) => {
             setIsPresentationOpen(false);
-            setViewingReport(rep);
-            setIsReportModalOpen(true);
+            setViewingPdf(doc);
           }}
+        />
+      )}
+
+      {/* MODAL CONCLUIR ATIVIDADE COM UPLOAD OBRIGATÓRIO DE PDF */}
+      {isCompleteModalOpen && completingTarget && (
+        <CompleteActivityModal
+          activity={completingTarget}
+          unit={data.units.find(u => u.id === completingTarget.unit_id)}
+          onClose={() => { setIsCompleteModalOpen(false); setCompletingTarget(null); }}
+          onCompleteSuccess={handleCompleteSuccess}
+        />
+      )}
+
+      {/* VISUALIZADOR DE PDF DO CHAMADO */}
+      {viewingPdf && (
+        <PdfViewerModal
+          pdfDocument={viewingPdf}
+          onClose={() => setViewingPdf(null)}
         />
       )}
 
@@ -435,29 +491,9 @@ export default function App() {
             setIsPendenciesListModalOpen(false);
             setIsPendencyModalOpen(true);
           }}
-          onStartCloseTicket={handleStartCloseTicket}
-          onViewReport={(rep) => {
-            setViewingReport(rep);
-            setIsReportModalOpen(true);
-          }}
+          onStartCloseTicket={handleStartClosePendency}
+          onViewPdf={(doc) => setViewingPdf(doc)}
           onDeletePendency={handleDeletePendency}
-        />
-      )}
-
-      {isCloseTicketWizardOpen && (
-        <CloseTicketWizardModal
-          pendency={closingPendency}
-          units={data.units}
-          activities={data.activities}
-          onClose={() => { setIsCloseTicketWizardOpen(false); setClosingPendency(null); }}
-          onSaveReport={handleFinishCloseTicket}
-        />
-      )}
-
-      {isReportModalOpen && (
-        <ClosureReportModal
-          report={viewingReport}
-          onClose={() => { setIsReportModalOpen(false); setViewingReport(null); }}
         />
       )}
 

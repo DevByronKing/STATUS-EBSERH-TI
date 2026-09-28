@@ -2790,3 +2790,311 @@ body {
     margin: 0.5cm;
   }
 }
+
+/* ========================================================
+   ESTILOS DO FLUXO DE UPLOAD DE PDF OBRIGATÓRIO & VISUALIZADOR
+   ======================================================== */
+
+/* Botão Concluir com PDF no Card */
+.btn-complete-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 192, 181, 0.18) 0%, rgba(0, 163, 224, 0.18) 100%);
+  border: 1px dashed var(--elis-teal);
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 0.85rem;
+  transition: all 0.25s;
+}
+
+.btn-complete-card-action:hover {
+  background: var(--elis-teal);
+  color: #001242;
+  border-style: solid;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 192, 181, 0.35);
+}
+
+.pdf-mini-icon {
+  background: rgba(0, 163, 224, 0.15);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Concluir Atividade com PDF */
+.complete-activity-modal {
+  max-width: 620px;
+}
+
+.complete-icon-badge {
+  background: rgba(0, 192, 181, 0.15);
+  border: 1px solid rgba(0, 192, 181, 0.3);
+  border-radius: 10px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.complete-activity-banner {
+  background: var(--input-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.activity-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.activity-icon-big {
+  font-size: 1.8rem;
+}
+
+.activity-title-big {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.activity-unit-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.activity-desc-sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* Dropzone de PDF */
+.upload-mandatory-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.badge-required {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: #ff4d5a;
+  background: rgba(227, 6, 19, 0.12);
+  border: 1px solid rgba(227, 6, 19, 0.25);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.pdf-dropzone {
+  border: 2px dashed var(--border-color);
+  border-radius: 14px;
+  padding: 1.75rem 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  background: var(--surface-glass);
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 130px;
+}
+
+.pdf-dropzone:hover,
+.pdf-dropzone.drag-active {
+  border-color: var(--primary);
+  background: rgba(0, 163, 224, 0.08);
+  box-shadow: 0 0 16px var(--primary-glow);
+}
+
+.pdf-dropzone.has-file {
+  border-color: var(--success);
+  background: rgba(0, 192, 181, 0.06);
+  border-style: solid;
+}
+
+.dropzone-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropzone-icon {
+  color: var(--primary);
+  opacity: 0.85;
+}
+
+.dropzone-main-text {
+  font-size: 0.88rem;
+  color: var(--text-main);
+}
+
+.dropzone-sub-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  max-width: 380px;
+}
+
+.dropzone-file-selected {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  width: 100%;
+}
+
+.file-info-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+.file-size {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.btn-replace-file {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-replace-file:hover {
+  background: rgba(0, 163, 224, 0.1);
+  border-color: var(--primary);
+}
+
+.disabled-btn {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* VISUALIZADOR DE PDF MODAL */
+.pdf-viewer-overlay {
+  z-index: 2500;
+}
+
+.pdf-viewer-container {
+  max-width: 1000px;
+  width: 95vw;
+  height: 90vh;
+  max-height: 90vh;
+  background: var(--surface);
+  border-radius: 16px;
+}
+
+.pdf-viewer-header {
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--header-glass);
+  flex-shrink: 0;
+}
+
+.pdf-header-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pdf-icon-badge {
+  background: rgba(0, 163, 224, 0.15);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-sub-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--success);
+}
+
+.pdf-main-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.pdf-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.btn-pdf-header-action {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-pdf-header-action:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.pdf-iframe-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background: #525659;
+  overflow: hidden;
+}
+
+.pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
