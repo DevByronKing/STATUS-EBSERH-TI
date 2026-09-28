@@ -57,15 +57,19 @@ export default function CloudSettingsModal({
   };
 
   const copySqlSchema = () => {
-    const sql = `-- Copie e cole no SQL Editor do seu projeto Supabase:
+    const sql = `-- SCHEMA SQL OFICIAL - STATUS ELIS / EBSERH
+-- Cole este script no SQL Editor do seu projeto Supabase e clique em 'RUN':
+
 CREATE TABLE IF NOT EXISTS elis_units (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
+  full_name TEXT,
   subtitle TEXT DEFAULT 'Implantação Tecnológica',
   description TEXT,
   order_index INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE elis_units ADD COLUMN IF NOT EXISTS full_name TEXT;
 
 CREATE TABLE IF NOT EXISTS elis_activities (
   id TEXT PRIMARY KEY,
@@ -76,10 +80,12 @@ CREATE TABLE IF NOT EXISTS elis_activities (
   description TEXT,
   validation TEXT,
   alert JSONB,
+  closure_document JSONB,
   comments JSONB DEFAULT '[]'::jsonb,
   order_index INTEGER DEFAULT 0,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE elis_activities ADD COLUMN IF NOT EXISTS closure_document JSONB;
 
 CREATE TABLE IF NOT EXISTS elis_pendencies (
   id TEXT PRIMARY KEY,
@@ -91,24 +97,44 @@ CREATE TABLE IF NOT EXISTS elis_pendencies (
   description TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   resolved_at TIMESTAMPTZ,
+  closure_document JSONB,
   closure_report JSONB
 );
+ALTER TABLE elis_pendencies ADD COLUMN IF NOT EXISTS closure_document JSONB;
+ALTER TABLE elis_pendencies ADD COLUMN IF NOT EXISTS closure_report JSONB;
 
 ALTER TABLE elis_units ENABLE ROW LEVEL SECURITY;
 ALTER TABLE elis_activities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE elis_pendencies ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Leitura pública para unidades" ON elis_units;
+DROP POLICY IF EXISTS "Leitura pública para atividades" ON elis_activities;
+DROP POLICY IF EXISTS "Leitura pública para pendencias" ON elis_pendencies;
+
 CREATE POLICY "Leitura pública para unidades" ON elis_units FOR SELECT USING (true);
 CREATE POLICY "Leitura pública para atividades" ON elis_activities FOR SELECT USING (true);
 CREATE POLICY "Leitura pública para pendencias" ON elis_pendencies FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Modificação para unidades" ON elis_units;
+DROP POLICY IF EXISTS "Modificação para atividades" ON elis_activities;
+DROP POLICY IF EXISTS "Modificação para pendencias" ON elis_pendencies;
 
 CREATE POLICY "Modificação para unidades" ON elis_units FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Modificação para atividades" ON elis_activities FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Modificação para pendencias" ON elis_pendencies FOR ALL USING (true) WITH CHECK (true);
 
-ALTER PUBLICATION supabase_realtime ADD TABLE elis_units;
-ALTER PUBLICATION supabase_realtime ADD TABLE elis_activities;
-ALTER PUBLICATION supabase_realtime ADD TABLE elis_pendencies;`;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND tablename = 'elis_units') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE elis_units;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND tablename = 'elis_activities') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE elis_activities;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND tablename = 'elis_pendencies') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE elis_pendencies;
+  END IF;
+END $$;`;
 
     navigator.clipboard.writeText(sql);
     setCopiedSql(true);

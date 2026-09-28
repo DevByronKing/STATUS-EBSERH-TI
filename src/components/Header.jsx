@@ -11,7 +11,8 @@ import {
   Plus, 
   Search, 
   Tv, 
-  CheckCircle2
+  CheckCircle2,
+  FileText
 } from 'lucide-react';
 
 export default function Header({
@@ -24,6 +25,8 @@ export default function Header({
   onOpenNewActivity,
   onOpenPendenciesModal,
   onOpenPresentation,
+  onOpenRepository,
+  pdfCount,
   openPendenciesCount,
   dataSource,
   searchQuery,
@@ -83,6 +86,19 @@ export default function Header({
           >
             <Tv size={16} />
             <span>Apresentação Elis</span>
+          </button>
+
+          {/* Botão Central de Chamados & PDFs */}
+          <button 
+            className="btn-repository-mode" 
+            onClick={onOpenRepository}
+            title="Abrir Central de Chamados & Repositório Geral de PDFs Homologados"
+          >
+            <FileText size={16} />
+            <span>Central de PDFs</span>
+            {pdfCount > 0 && (
+              <span className="repo-counter-badge">{pdfCount}</span>
+            )}
           </button>
 
           {/* Status da Conexão / Nuvem */}

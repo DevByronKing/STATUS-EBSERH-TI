@@ -114,6 +114,7 @@ export async function loadAllData() {
         description: a.description,
         validation: a.validation,
         alert: a.alert,
+        closureDocument: a.closure_document || null,
         comments: a.comments || [],
         order_index: a.order_index,
         updated_at: a.updated_at
@@ -128,7 +129,8 @@ export async function loadAllData() {
         description: p.description,
         created_at: p.created_at,
         resolved_at: p.resolved_at,
-        closure_report: p.closure_report
+        closureDocument: p.closure_document || p.closure_report || null,
+        closure_report: p.closure_report || p.closure_document || null
       })),
       lastUpdated: new Date().toISOString()
     };
@@ -165,6 +167,7 @@ export async function seedSupabaseInitialData(supabase, data) {
         description: act.description,
         validation: act.validation,
         alert: act.alert,
+        closure_document: act.closureDocument || null,
         comments: act.comments,
         order_index: act.order_index
       });
@@ -181,7 +184,8 @@ export async function seedSupabaseInitialData(supabase, data) {
         description: pend.description,
         created_at: pend.created_at,
         resolved_at: pend.resolved_at,
-        closure_report: pend.closure_report
+        closure_document: pend.closureDocument || pend.closure_report || null,
+        closure_report: pend.closure_report || pend.closureDocument || null
       });
     }
   } catch (err) {
@@ -204,6 +208,7 @@ export async function syncSaveActivity(activity, allData) {
         description: activity.description,
         validation: activity.validation,
         alert: activity.alert,
+        closure_document: activity.closureDocument || null,
         comments: activity.comments || [],
         order_index: activity.order_index ?? 0,
         updated_at: new Date().toISOString()
@@ -243,7 +248,8 @@ export async function syncSavePendency(pendency, allData) {
         description: pendency.description,
         created_at: pendency.created_at || new Date().toISOString(),
         resolved_at: pendency.resolved_at || null,
-        closure_report: pendency.closure_report || null
+        closure_document: pendency.closureDocument || pendency.closure_report || null,
+        closure_report: pendency.closure_report || pendency.closureDocument || null
       });
     } catch (e) {
       console.error('Erro ao sincronizar pendência com Supabase:', e);

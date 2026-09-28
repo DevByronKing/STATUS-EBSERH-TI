@@ -10,6 +10,7 @@ import PdfViewerModal from './components/PdfViewerModal';
 import AdminLoginModal from './components/AdminLoginModal';
 import CloudSettingsModal from './components/CloudSettingsModal';
 import PresentationModal from './components/PresentationModal';
+import DocumentRepositoryModal from './components/DocumentRepositoryModal';
 
 import { 
   loadAllData, 
@@ -73,6 +74,9 @@ export default function App() {
 
   // Visualizador de PDF
   const [viewingPdf, setViewingPdf] = useState(null);
+
+  // Central de Chamados & PDFs (Repositório Geral)
+  const [isRepositoryOpen, setIsRepositoryOpen] = useState(false);
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
@@ -324,6 +328,8 @@ export default function App() {
   };
 
   const openPendenciesCount = data.pendencies.filter(p => p.status !== 'resolved').length;
+  const pdfCount = (data.activities || []).filter(a => a.closureDocument).length + 
+                   (data.pendencies || []).filter(p => p.closureDocument).length;
 
   const filteredUnits = data.units.filter(u => selectedUnit === 'all' || u.id === selectedUnit);
 
@@ -365,6 +371,8 @@ export default function App() {
         onOpenNewActivity={() => handleOpenNewActivity()}
         onOpenPendenciesModal={() => setIsPendenciesListModalOpen(true)}
         onOpenPresentation={() => setIsPresentationOpen(true)}
+        onOpenRepository={() => setIsRepositoryOpen(true)}
+        pdfCount={pdfCount}
         openPendenciesCount={openPendenciesCount}
         dataSource={dataSource}
         searchQuery={searchQuery}
@@ -440,6 +448,20 @@ export default function App() {
           onClose={() => setIsPresentationOpen(false)}
           onViewReport={(doc) => {
             setIsPresentationOpen(false);
+            setViewingPdf(doc);
+          }}
+        />
+      )}
+
+      {/* CENTRAL DE CHAMADOS & REPOSITÓRIO GERAL DE PDFS */}
+      {isRepositoryOpen && (
+        <DocumentRepositoryModal
+          activities={data.activities}
+          pendencies={data.pendencies}
+          units={data.units}
+          onClose={() => setIsRepositoryOpen(false)}
+          onViewPdf={(doc) => {
+            setIsRepositoryOpen(false);
             setViewingPdf(doc);
           }}
         />
