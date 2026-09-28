@@ -1,7 +1,7 @@
 import { initialUnits, initialActivities, initialPendencies } from '../data/initialData';
 import { getSupabaseClient } from './supabaseClient';
 
-const LOCAL_STORAGE_KEY = 'elis_dashboard_data_v2';
+const LOCAL_STORAGE_KEY = 'elis_dashboard_data_v3';
 const ADMIN_PIN_KEY = 'elis_admin_pin';
 const ADMIN_SESSION_KEY = 'elis_admin_session';
 const DEFAULT_PIN = 'elis2026';
@@ -88,9 +88,9 @@ export async function loadAllData() {
       return { data: localData, source: 'local' };
     }
 
-    // Se as tabelas estiverem vazias pela primeira vez, faz o seed inicial no Supabase!
-    if ((!unitsRes.data || unitsRes.data.length === 0) && (!activitiesRes.data || activitiesRes.data.length === 0)) {
-      console.log('Tabelas Supabase vazias. Populando dados iniciais da Elis...');
+    // Se a tabela de unidades estiver vazia pela primeira vez, cadastra as 2 unidades oficiais
+    if (!unitsRes.data || unitsRes.data.length === 0) {
+      console.log('Populando unidades hospitalares no Supabase...');
       await seedSupabaseInitialData(supabase, localData);
       return { data: localData, source: 'supabase' };
     }

@@ -24,6 +24,7 @@ import {
 } from './services/storage';
 import { initialUnits, initialActivities, initialPendencies } from './data/initialData';
 import { getSupabaseClient } from './services/supabaseClient';
+import { deletePdfFromIndexedDb } from './services/pdfStorage';
 
 export default function App() {
   // Tema Claro / Escuro
@@ -311,6 +312,98 @@ export default function App() {
     setTimeout(() => setCopiedLink(false), 3000);
   };
 
+  // Excluir Chamado / PDF da Central de Documentos
+  const handleDeleteDocument = async (doc) => {
+    try {
+      if (doc.id) {
+        await deletePdfFromIndexedDb(doc.id);
+      }
+      if (doc.ticketNumber) {
+        await deletePdfFromIndexedDb(doc.ticketNumber);
+      }
+
+      if (doc.sourceType === 'activity') {
+        const act = data.activities.find(a => a.id === doc.sourceId);
+        if (act) {
+          const updatedAct = {
+            ...act,
+            closureDocument: null,
+            validation: ''
+          };
+          const updatedActivities = data.activities.map(a => a.id === act.id ? updatedAct : a);
+          const nextData = { ...data, activities: updatedActivities };
+          setData(nextData);
+          await syncSaveActivity(updatedAct, nextData);
+        }
+      } else if (doc.sourceType === 'pendency') {
+        const pend = data.pendencies.find(p => p.id === doc.sourceId);
+        if (pend) {
+          const updatedPend = {
+            ...pend,
+            closureDocument: null,
+            closure_report: null,
+            status: 'open',
+            resolved_at: null
+          };
+          const updatedPendencies = data.pendencies.map(p => p.id === pend.id ? updatedPend : p);
+          const nextData = { ...data, pendencies: updatedPendencies };
+          setData(nextData);
+          await syncSavePendency(updatedPend, nextData);
+        }
+      }
+    } catch (err) {
+      console.error('Erro ao excluir documento:', err);
+      alert('Erro ao excluir documento.');
+    }
+  };
+
+  // Editar Chamado / Documento da Central
+  const handleEditDocument = async (doc, updatedDocPayload) => {
+    try {
+      const finalDoc = {
+        ...doc,
+        ticketNumber: updatedDocPayload.ticketNumber,
+        title: updatedDocPayload.title,
+        closedAt: updatedDocPayload.closedAt,
+        notes: updatedDocPayload.notes,
+        fileName: updatedDocPayload.fileName || doc.fileName,
+        url: updatedDocPayload.url || doc.url,
+        dataUrl: updatedDocPayload.dataUrl || doc.dataUrl
+      };
+
+      if (doc.sourceType === 'activity') {
+        const act = data.activities.find(a => a.id === doc.sourceId);
+        if (act) {
+          const updatedAct = {
+            ...act,
+            validation: updatedDocPayload.ticketNumber ? `Homologado Chamado ${updatedDocPayload.ticketNumber}` : act.validation,
+            closureDocument: finalDoc
+          };
+          const updatedActivities = data.activities.map(a => a.id === act.id ? updatedAct : a);
+          const nextData = { ...data, activities: updatedActivities };
+          setData(nextData);
+          await syncSaveActivity(updatedAct, nextData);
+        }
+      } else if (doc.sourceType === 'pendency') {
+        const pend = data.pendencies.find(p => p.id === doc.sourceId);
+        if (pend) {
+          const updatedPend = {
+            ...pend,
+            closureDocument: finalDoc,
+            closure_report: finalDoc
+          };
+          const updatedPendencies = data.pendencies.map(p => p.id === pend.id ? updatedPend : p);
+          const nextData = { ...data, pendencies: updatedPendencies };
+          setData(nextData);
+          await syncSavePendency(updatedPend, nextData);
+        }
+      }
+    } catch (err) {
+      console.error('Erro ao editar documento:', err);
+      alert('Erro ao editar documento.');
+    }
+  };
+
   // Restaurar dados originais padrão Elis
   const handleResetToDefault = () => {
     if (window.confirm('Deseja realmente restaurar os dados originais da Elis?')) {
@@ -459,11 +552,14 @@ export default function App() {
           activities={data.activities}
           pendencies={data.pendencies}
           units={data.units}
+          isAdmin={isAdmin}
           onClose={() => setIsRepositoryOpen(false)}
           onViewPdf={(doc) => {
             setIsRepositoryOpen(false);
             setViewingPdf(doc);
           }}
+          onDeleteDocument={handleDeleteDocument}
+          onEditDocument={handleEditDocument}
         />
       )}
 
