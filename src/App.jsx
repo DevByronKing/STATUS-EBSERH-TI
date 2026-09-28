@@ -419,10 +419,14 @@ export default function App() {
             <button className="btn-footer-link" onClick={() => setIsPresentationOpen(true)}>
               Modo Apresentação (Slides Padrão Elis)
             </button>
-            <span className="footer-divider">&middot;</span>
-            <button className="btn-footer-link" onClick={() => setIsSettingsModalOpen(true)}>
-              Nuvem & Backup
-            </button>
+            {isAdmin && (
+              <>
+                <span className="footer-divider">&middot;</span>
+                <button className="btn-footer-link" onClick={() => setIsSettingsModalOpen(true)}>
+                  Nuvem & Backup
+                </button>
+              </>
+            )}
           </div>
         </footer>
       </main>

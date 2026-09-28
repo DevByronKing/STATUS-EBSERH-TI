@@ -86,14 +86,24 @@ export default function Header({
           </button>
 
           {/* Status da Conexão / Nuvem */}
-          <button 
-            className={`cloud-badge ${dataSource === 'supabase' ? 'connected' : 'local'}`}
-            onClick={onOpenSettings}
-            title={dataSource === 'supabase' ? 'Conectado à nuvem Supabase (Sincronizado)' : 'Armazenado no navegador (Clique para conectar nuvem)'}
-          >
-            <Database size={14} />
-            <span>{dataSource === 'supabase' ? 'Supabase' : 'Local'}</span>
-          </button>
+          {isAdmin ? (
+            <button 
+              className={`cloud-badge ${dataSource === 'supabase' ? 'connected' : 'local'}`}
+              onClick={onOpenSettings}
+              title={dataSource === 'supabase' ? 'Conectado à nuvem Supabase (Sincronizado)' : 'Armazenado no navegador (Configurações)'}
+            >
+              <Database size={14} />
+              <span>{dataSource === 'supabase' ? 'Supabase' : 'Local'}</span>
+            </button>
+          ) : (
+            <div 
+              className={`cloud-badge static ${dataSource === 'supabase' ? 'connected' : 'local'}`}
+              title={dataSource === 'supabase' ? 'Painel conectado em tempo real' : 'Painel Online'}
+            >
+              <Database size={14} />
+              <span>{dataSource === 'supabase' ? 'Ao Vivo' : 'Online'}</span>
+            </div>
+          )}
 
           {/* Botão de Pendências com Badge */}
           <button className="btn-pendencies" onClick={onOpenPendenciesModal}>

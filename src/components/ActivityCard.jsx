@@ -167,47 +167,52 @@ export default function ActivityCard({
           </div>
         )}
 
-        {/* Seção de Comentários / Anotações */}
-        <div className="comments-section">
-          <div className="comments-header" onClick={() => setShowComments(!showComments)}>
-            <div className="comments-header-left">
-              <MessageSquare size={13} />
-              <span>Anotações & Histórico ({activity.comments ? activity.comments.length : 0})</span>
-            </div>
-          </div>
-
-          {showComments && (
-            <>
-              <div className="comments-list">
-                {activity.comments && activity.comments.length > 0 ? (
-                  activity.comments.map((c) => (
-                    <div key={c.id} className="comment-item">
-                      <div className="comment-meta">
-                        <span className="comment-author">{c.author || 'Técnico'}</span>
-                        <span className="comment-date">{c.date}</span>
-                      </div>
-                      <div className="comment-body">{c.text}</div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="empty-comments">Nenhuma anotação registrada ainda.</div>
-                )}
+        {/* Seção de Anotações Técnicas / Histórico */}
+        {((activity.comments && activity.comments.length > 0) || isAdmin) && (
+          <div className="comments-section">
+            <div className="comments-header" onClick={() => setShowComments(!showComments)}>
+              <div className="comments-header-left">
+                <MessageSquare size={13} />
+                <span>Histórico Técnico ({activity.comments ? activity.comments.length : 0})</span>
               </div>
+            </div>
 
-              <form onSubmit={handleSendComment} className="input-group">
-                <input
-                  type="text"
-                  placeholder="Adicionar anotação rápida..."
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                />
-                <button type="submit" title="Salvar anotação">
-                  <Send size={13} />
-                </button>
-              </form>
-            </>
-          )}
-        </div>
+            {showComments && (
+              <>
+                <div className="comments-list">
+                  {activity.comments && activity.comments.length > 0 ? (
+                    activity.comments.map((c) => (
+                      <div key={c.id} className="comment-item">
+                        <div className="comment-meta">
+                          <span className="comment-author">{c.author || 'Técnico'}</span>
+                          <span className="comment-date">{c.date}</span>
+                        </div>
+                        <div className="comment-body">{c.text}</div>
+                      </div>
+                    ))
+                  ) : (
+                    isAdmin && <div className="empty-comments">Nenhuma anotação registrada ainda.</div>
+                  )}
+                </div>
+
+                {/* Formulário de adicionar anotação exclusivo para o Administrador */}
+                {isAdmin && (
+                  <form onSubmit={handleSendComment} className="input-group">
+                    <input
+                      type="text"
+                      placeholder="Adicionar anotação técnica..."
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                    />
+                    <button type="submit" title="Salvar anotação">
+                      <Send size={13} />
+                    </button>
+                  </form>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
