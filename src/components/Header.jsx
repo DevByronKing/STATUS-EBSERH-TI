@@ -56,7 +56,7 @@ export default function Header({
             </div>
             <div className="brand-divider"></div>
             <div className="brand-text">
-              <div className="brand-sub">EBSERH &middot; TECNOLOGIA DA INFORMAÇÃO</div>
+              <span className="brand-sub">EBSERH &middot; TI</span>
               <h1 className="brand-title">Status Dashboard</h1>
             </div>
           </div>
@@ -64,10 +64,10 @@ export default function Header({
 
         <div className="header-center">
           <div className="search-bar">
-            <Search size={16} className="search-icon" />
+            <Search size={15} className="search-icon" />
             <input
               type="text"
-              placeholder="Buscar atividade, portal, servidor, pendência..."
+              placeholder="Buscar atividade, portal, servidor..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -82,20 +82,20 @@ export default function Header({
           <button 
             className="btn-presentation-mode" 
             onClick={onOpenPresentation}
-            title="Abrir Apresentação Executiva em Slides no Padrão Elis"
+            title="Apresentação Executiva (Slides Padrão Elis)"
           >
-            <Tv size={16} />
-            <span>Apresentação Elis</span>
+            <Tv size={15} />
+            <span>Apresentação</span>
           </button>
 
           {/* Botão Central de Chamados & PDFs */}
           <button 
             className="btn-repository-mode" 
             onClick={onOpenRepository}
-            title="Abrir Central de Chamados & Repositório Geral de PDFs Homologados"
+            title="Central de Chamados & Repositório de PDFs"
           >
-            <FileText size={16} />
-            <span>Central de PDFs</span>
+            <FileText size={15} />
+            <span>PDFs</span>
             {pdfCount > 0 && (
               <span className="repo-counter-badge">{pdfCount}</span>
             )}
@@ -106,9 +106,9 @@ export default function Header({
             <button 
               className={`cloud-badge ${dataSource === 'supabase' ? 'connected' : 'local'}`}
               onClick={onOpenSettings}
-              title={dataSource === 'supabase' ? 'Conectado à nuvem Supabase (Sincronizado)' : 'Armazenado no navegador (Configurações)'}
+              title={dataSource === 'supabase' ? 'Supabase Conectado (Ao Vivo)' : 'Modo Local (Configurações)'}
             >
-              <Database size={14} />
+              <Database size={13} />
               <span>{dataSource === 'supabase' ? 'Supabase' : 'Local'}</span>
             </button>
           ) : (
@@ -116,14 +116,14 @@ export default function Header({
               className={`cloud-badge static ${dataSource === 'supabase' ? 'connected' : 'local'}`}
               title={dataSource === 'supabase' ? 'Painel conectado em tempo real' : 'Painel Online'}
             >
-              <Database size={14} />
+              <Database size={13} />
               <span>{dataSource === 'supabase' ? 'Ao Vivo' : 'Online'}</span>
             </div>
           )}
 
           {/* Botão de Pendências com Badge */}
           <button className="btn-pendencies" onClick={onOpenPendenciesModal}>
-            <AlertCircle size={16} />
+            <AlertCircle size={15} />
             <span>Pendências</span>
             {openPendenciesCount > 0 && (
               <span className="pendency-counter-badge">{openPendenciesCount}</span>
@@ -134,9 +134,9 @@ export default function Header({
           <button 
             className={`btn-share ${copiedLink ? 'copied' : ''}`} 
             onClick={onCopyLink}
-            title="Copiar link compartilhável para Gestores"
+            title="Copiar link para Gestores"
           >
-            {copiedLink ? <CheckCircle2 size={16} /> : <Share2 size={16} />}
+            {copiedLink ? <CheckCircle2 size={15} /> : <Share2 size={15} />}
             <span>{copiedLink ? 'Copiado!' : 'Compartilhar'}</span>
           </button>
 
